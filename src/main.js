@@ -94,10 +94,17 @@ function analyzeSalesData(data, options) {
             
             const cost = product.purchase_price * item.quantity;
             const revenue = calculateRevenue(item, product);
+            console.log('Товар:', item.sku);
+            console.log('sale_price:', item.sale_price);
+            console.log('quantity:', item.quantity);
+            console.log('discount:', item.discount);
+            console.log('revenue посчитана:', revenue);
+            console.log('product.purchase_price:', product.purchase_price);
+            console.log('---');
             const profit = revenue - cost;
             
-            seller.profit += profit;
-            seller.revenue += revenue;
+            seller.revenue = Number((seller.revenue + revenue).toFixed(2));
+            seller.profit = Number((seller.profit + profit).toFixed(2));
             
             if (!seller.products_sold[item.sku]) {
                 seller.products_sold[item.sku] = 0;
