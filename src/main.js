@@ -14,7 +14,7 @@ function calculateSimpleRevenue(purchase, _product) {
    const discountCoefficient = 1 - (discount / 100);
 
    // Возвращаем выручку
-   return sale_price * quantity * discountCoefficient;
+   return Number((sale_price * quantity * discountCoefficient).toFixed(2));
 }
 
 /**
@@ -92,16 +92,9 @@ function analyzeSalesData(data, options) {
             const product = productIndex[item.sku];
             if (!product) return;
             
-            const cost = product.purchase_price * item.quantity;
+            const cost = Number((product.purchase_price * item.quantity).toFixed(2));
             const revenue = calculateRevenue(item, product);
-            console.log('Товар:', item.sku);
-            console.log('sale_price:', item.sale_price);
-            console.log('quantity:', item.quantity);
-            console.log('discount:', item.discount);
-            console.log('revenue посчитана:', revenue);
-            console.log('product.purchase_price:', product.purchase_price);
-            console.log('---');
-            const profit = revenue - cost;
+            const profit = Number((revenue - cost).toFixed(2));
             
             seller.revenue = Number((seller.revenue + revenue).toFixed(2));
             seller.profit = Number((seller.profit + profit).toFixed(2));
