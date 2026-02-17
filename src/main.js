@@ -11,10 +11,10 @@ function calculateSimpleRevenue(purchase, _product) {
    const { discount, sale_price, quantity } = purchase;
 
     // Коэффициент для расчета суммы без скидки в десятичном формате
-   const discountCoefficient = 1 - (discount / 100);
+   const discountCoefficient = Number((1 - discount / 100).toFixed(4));
 
    // Возвращаем выручку
-   return Number((sale_price * quantity * discountCoefficient).toFixed(2));
+   return Number((sale_price * quantity * discountCoefficient).toFixed(2) || 0);
 }
 
 /**
@@ -56,6 +56,11 @@ function analyzeSalesData(data, options) {
         throw new Error('Некорректные входные данные');
     }
 
+    if (!data || !Array.isArray(data.purchase_records)) {
+        throw new Error('Некорректные данные');
+    }   
+
+
     // @TODO: Проверка наличия опций
     if (typeof options !== "object" || options === null) {
         throw new Error('Чего-то не хватает');
@@ -63,7 +68,7 @@ function analyzeSalesData(data, options) {
 
     const { calculateRevenue, calculateBonus } = options;
     
-    if (!calculateRevenue || !calculateBonus) {
+    if (typeof calculateRevenue !== "function" || typeof calculateBonus !== "function") {
         throw new Error('Чего-то не хватает');
     }
 
