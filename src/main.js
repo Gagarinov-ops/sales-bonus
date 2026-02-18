@@ -2,6 +2,7 @@
  * Функция для расчета выручки
  * @param purchase запись о покупке
  * @param _product карточка товара
+ * 
  * @returns {number}
  */
 function calculateSimpleRevenue(purchase, _product) {
