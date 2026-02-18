@@ -1,3 +1,29 @@
+function validateData(data) {
+  if (!data) {
+    throw new Error('Данные не предоставлены');
+  }
+
+  if (!Array.isArray(data.sellers)) {
+    throw new Error('Поле sellers должно быть массивом');
+  }
+  if (!Array.isArray(data.products)) {
+    throw new Error('Поле products должно быть массивом');
+  }
+  if (!Array.isArray(data.purchase_records)) {
+    throw new Error('Поле purchase_records должно быть массивом');
+  }
+
+  if (data.sellers.length === 0) {
+    throw new Error('Массив sellers не должен быть пустым');
+  }
+  if (data.products.length === 0) {
+    throw new Error('Массив products не должен быть пустым');
+  }
+  if (data.purchase_records.length === 0) {
+    throw new Error('Массив purchase_records не должен быть пустым');
+  }
+}
+
 /**
  * Функция для расчета выручки
  * @param purchase запись о покупке
@@ -12,10 +38,10 @@ function calculateSimpleRevenue(purchase, _product) {
    const { discount, sale_price, quantity } = purchase;
 
     // Коэффициент для расчета суммы без скидки в десятичном формате
-   const discountCoefficient = Number((1 - discount / 100).toFixed(4));
+   const discountCoefficient = 1 - (discount / 100);
 
    // Возвращаем выручку
-   return Number((sale_price * quantity * discountCoefficient).toFixed(2) || 0);
+   return sale_price * quantity * discountCoefficient;
 }
 
 /**
@@ -46,21 +72,7 @@ function calculateBonusByProfit(index, total, seller) {
  */
 function analyzeSalesData(data, options) {
     // @TODO: Проверка входных данных
-    if (!data
-        || !Array.isArray(data.sellers)
-        || !Array.isArray(data.products)
-        || !Array.isArray(data.purchase_records)
-        || data.sellers.length === 0
-        || data.products.length === 0
-        || data.purchase_records.length === 0
-    ) {
-        throw new Error('Некорректные входные данные');
-    }
-
-    if (!data || !Array.isArray(data.purchase_records)) {
-        throw new Error('Некорректные данные');
-    }   
-
+    validateData(data);
 
     // @TODO: Проверка наличия опций
     if (typeof options !== "object" || options === null) {
@@ -98,12 +110,12 @@ function analyzeSalesData(data, options) {
             const product = productIndex[item.sku];
             if (!product) return;
             
-            const cost = Number((product.purchase_price * item.quantity).toFixed(2));
+            const cost = product.purchase_price * item.quantity;
             const revenue = calculateRevenue(item, product);
-            const profit = Number((revenue - cost).toFixed(2));
+            const profit = revenue - cost;
             
-            seller.revenue = Number((seller.revenue + revenue).toFixed(2));
-            seller.profit = Number((seller.profit + profit).toFixed(2));
+            seller.revenue = seller.revenue + revenue;
+            seller.profit = seller.profit + profit;
             
             if (!seller.products_sold[item.sku]) {
                 seller.products_sold[item.sku] = 0;
